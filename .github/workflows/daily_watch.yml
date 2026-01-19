@@ -2,13 +2,14 @@ name: Daily Watch & RSS
 
 on:
   schedule:
-    - cron: "5 22 * * *"  #北京时间6点05运行
+    - cron: "5 22 * * *"  # 北京时间6点05运行
   push:
     branches:
       - main
   workflow_dispatch:
 
 jobs:
+  # 任务1: 你的主程序
   watch:
     runs-on: ubuntu-latest
     permissions:
@@ -54,7 +55,9 @@ jobs:
         with:
           path: ./public
       - uses: actions/deploy-pages@v4
-      keep-workflow-alive:
+
+  # 任务2: 保活任务 (必须和 watch 对齐，不能缩进在里面)
+  keep-workflow-alive:
     runs-on: ubuntu-latest
     permissions:
       contents: write
