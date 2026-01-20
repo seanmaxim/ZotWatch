@@ -56,13 +56,27 @@ jobs:
           path: ./public
       - uses: actions/deploy-pages@v4
 
-  # 任务2: 保活任务 (必须和 watch 对齐，不能缩进在里面)
+  # 任务2: 保活任务（已改为纯代码版，无需下载插件）
   keep-workflow-alive:
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
       - uses: actions/checkout@v4
-      - uses: gautamkrishnar/keepalive-workflow@v2
-        with:
-          time_elapsed: 50
+      
+      - name: Auto-commit to keep alive
+        run: |
+          # 1. 配置 Git 用户信息（使用 GitHub 官方机器人账号）
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          
+          # 2. 只有每月的 1 号才提交，避免每天刷屏
+          # 如果你想每天都提交，可以把下面 4 行删掉
+          if [ "$(date +%d)" != "01" ]; then
+            echo "今天不是1号，跳过保活提交。"
+            exit 0
+          fi
+
+          # 3. 提交一个空的 Commit 来维持活跃
+          git commit --allow-empty -m "Automated keep-alive commit"
+          git push
